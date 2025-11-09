@@ -1,13 +1,16 @@
 import { registerAs } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { validateEnv } from '../env.validation';
+
+const validatedEnv = validateEnv(process.env);
 
 export default registerAs('database', (): TypeOrmModuleOptions => ({
   type: 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432', 10),
-  username: process.env.DB_USERNAME || 'bnvg',
-  password: process.env.DB_PASSWORD || 'secret',
-  database: process.env.DATABASE_NAME || 'medium',
+  host: validatedEnv.DB_HOST,
+  port: validatedEnv.DB_PORT,
+  username: validatedEnv.DB_USERNAME,
+  password: validatedEnv.DB_PASSWORD,
+  database: validatedEnv.DATABASE_NAME,
   synchronize: true,
   autoLoadEntities: true,
   logging: true,
