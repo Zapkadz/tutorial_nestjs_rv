@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, ConflictException } from '@nestjs/common
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -16,25 +17,16 @@ export class UsersService {
     return rest;
   }
 
-  async create(payload: Partial<User>) {
-    // check duplicate email in DB
-    const exists = await this.usersRepository.findOne({ where: { email: payload.email } });
-    if (exists) {
-      throw new ConflictException('Email already exists');
-    }
-
-    // hash password before save (important)
-    const hashedPassword = await bcrypt.hash(payload.password ?? '', 10);
-
-    const newUser = this.usersRepository.create({
-      username: payload.username,
-      email: payload.email,
-      password: hashedPassword,
-      bio: payload.bio,
-    });
-
-    const saved = await this.usersRepository.save(newUser);
-    return this.removePassword(saved);
+  async create(createDto: CreateUserDto) {
+    // Nếu password đã được hash (bắt đầu bằng $2b$), không hash lại
+    const password = createDto.password.startsWith('$2b$')
+      ? createDto.password
+      : await bcrypt.hash(
+          createDto.password,
+          process.env.BCRYPT_SALT ? +process.env.BCRYPT_SALT : 10,
+        );
+    const user = this.usersRepository.create({ ...createDto, password });
+    return this.usersRepository.save(user);
   }
 
   async findAll() {
@@ -79,5 +71,17 @@ export class UsersService {
   // (tùy chọn) helper to find by email (dùng cho auth)
   async findByEmail(email: string) {
     return this.usersRepository.findOne({ where: { email } });
+  }
+
+  async findByEmailWithPassword(email: string) {
+    return this.usersRepository
+      .createQueryBuilder('user')
+      .addSelect('user.password')
+      .where('user.email = :email', { email })
+      .getOne();
+  }
+
+  async findById(id: number) {
+    return this.usersRepository.findOne({ where: { id } });
   }
 }

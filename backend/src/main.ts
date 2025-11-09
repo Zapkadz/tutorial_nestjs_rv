@@ -4,7 +4,7 @@ import { AppModule } from './app.module';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 
-const DEFAULT_PORT = 3000;
+const DEFAULT_PORT = 3080;
 
 async function bootstrapApplication() {
   const app = await NestFactory.create(AppModule);
