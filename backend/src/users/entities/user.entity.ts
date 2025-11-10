@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique, OneToMany } from 'typeorm';
 
 @Entity({ name: 'users' })
 @Unique(['email'])
@@ -20,6 +20,9 @@ export class User {
 
   @Column({ type: 'text', nullable: true })
   image?: string | null;
+
+  @OneToMany(() => require('../../articles/entities/article.entity').Article, (article: any) => article.author)
+  articles: any[];
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
