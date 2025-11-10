@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { ProfilesModule } from './profiles/profiles.module';
 import databaseConfig from './config/database.config';
 
 const DATABASE_CONFIG_KEY = 'database';
@@ -26,6 +27,7 @@ const DATABASE_CONFIG_KEY = 'database';
     }),
     UsersModule,
     AuthModule,
+    ProfilesModule,
   ],
 })
 export class AppModule {}

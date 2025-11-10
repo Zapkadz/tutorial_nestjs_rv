@@ -36,7 +36,14 @@ export const envSchema = z.object({
 export type Env = z.infer<typeof envSchema>;
 
 export function validateEnv(env: NodeJS.ProcessEnv): Env {
-  const parsed = envSchema.safeParse(env);
+  const envWithDefaults = {
+    ...env,
+    DB_USERNAME: env.DB_USERNAME ?? 'dev_pg_user',
+    DB_PASSWORD: env.DB_PASSWORD ?? 'dev_pg_password',
+    DATABASE_NAME: env.DATABASE_NAME ?? 'nestjs_realworld',
+  };
+
+  const parsed = envSchema.safeParse(envWithDefaults);
   if (!parsed.success) {
     console.warn(INVALID_ENV_VARS_MESSAGE, parsed.error.format());
     process.exit(1);

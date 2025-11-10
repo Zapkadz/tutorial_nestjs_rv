@@ -14,4 +14,5 @@ export default registerAs('database', (): TypeOrmModuleOptions => ({
   synchronize: true,
   autoLoadEntities: true,
   logging: true,
+  dropSchema: true,
 }));

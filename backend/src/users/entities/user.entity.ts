@@ -18,6 +18,9 @@ export class User {
   @Column({ type: 'text', nullable: true })
   bio?: string;
 
+  @Column({ type: 'text', nullable: true })
+  image?: string | null;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

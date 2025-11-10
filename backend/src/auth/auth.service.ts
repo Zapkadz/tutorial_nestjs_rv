@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -46,11 +47,26 @@ export class AuthService {
     return this.buildUserResponse(user);
   }
 
-  private buildUserResponse(user: any) {
+  async updateUser(userId: number, dto: UpdateUserDto) {
+    if (dto.password) {
+      // usersService.update will hash if password provided; keep logic there
+    }
+    const updated = await this.usersService.update(userId, dto as any);
+    return this.buildUserResponse(updated);
+  }
+
+  buildUserResponse(user: any) {
     const payload = { id: user.id, email: user.email };
     const token = this.jwtService.sign(payload);
-    // Bảo mật: đảm bảo không trả password trong response
-    const { password, ...rest } = user;
-    return { user: { ...rest, token } };
+    const { username, email, bio = null, image = null } = user;
+    return {
+      user: {
+        email,
+        token,
+        username,
+        bio: bio ?? null,
+        image: image ?? null,
+      },
+    };
   }
 }
