@@ -14,6 +14,7 @@ import {
 import { User } from '../../users/entities/user.entity';
 import { Tag } from './tag.entity';
 import { Favorite } from './favorite.entity';
+import { Comment } from './comment.entity';
 
 @Entity({ name: 'articles' })
 @Unique(['slug'])
@@ -48,6 +49,9 @@ export class Article {
 
   @OneToMany(() => Favorite, (favorite) => favorite.article)
   favorites: Favorite[];
+
+  @OneToMany(() => Comment, (comment) => comment.article)
+  comments: Comment[];
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
