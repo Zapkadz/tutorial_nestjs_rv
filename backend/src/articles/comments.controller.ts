@@ -7,6 +7,7 @@ import {
   Param,
   UseGuards,
   Header,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -47,10 +48,10 @@ export class CommentsController {
   @UseGuards(JwtAuthGuard)
   async deleteComment(
     @Param('slug') slug: string,
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @User() currentUser: any,
   ) {
-    await this.commentsService.remove(slug, parseInt(id, 10), currentUser.id);
+    await this.commentsService.remove(slug, id, currentUser.id);
     return { message: 'Comment deleted successfully' };
   }
 }

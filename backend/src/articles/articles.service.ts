@@ -130,11 +130,13 @@ export class ArticlesService {
       queryBuilder.where(conditions.join(' AND '), params);
     }
 
-    queryBuilder.orderBy('article.createdAt', 'DESC');
-
+    // Get total count BEFORE applying pagination
     const totalCount = await queryBuilder.getCount();
 
+    // Apply ordering and pagination
     queryBuilder
+      .orderBy('article.createdAt', 'DESC')
+      .addOrderBy('article.id', 'DESC') // Secondary sort for consistent ordering
       .take(query.limit || 20)
       .skip(query.offset || 0);
 
