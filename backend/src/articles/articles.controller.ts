@@ -14,6 +14,7 @@ import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { ArticleQueryDto } from './dto/article-query.dto';
+import { FeedQueryDto } from './dto/feed-query.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { User } from '../auth/decorator/user.decorator';
 
@@ -32,14 +33,13 @@ export class ArticlesController {
   @UseGuards(JwtAuthGuard)
   @Header('Content-Type', 'application/json; charset=utf-8')
   async getFeed(
-    @Query('limit') limit?: number,
-    @Query('offset') offset?: number,
-    @User() currentUser?: any,
+    @Query() query: FeedQueryDto,
+    @User() currentUser: any,
   ) {
     const result = await this.articlesService.findFeed(
       currentUser.id,
-      limit ? Number(limit) : 20,
-      offset ? Number(offset) : 0,
+      query.limit || 20,
+      query.offset || 0,
     );
     return this.articlesService.formatArticlesResponse(result.articles, result.articlesCount);
   }
